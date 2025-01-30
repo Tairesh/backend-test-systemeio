@@ -5,10 +5,22 @@ services:
             context: .
             args:
                 USER_ID: ${USER_ID:-1000}
-            network: host
         ports:
             - "8337:8337"
         volumes:
             - .:/app:rw
         environment:
             - APP_ENV=dev
+    db:
+        image: postgres
+        restart: always
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: db
+        volumes:
+            - pgdata:/var/lib/postgresql/data:rw
+volumes:
+    pgdata:

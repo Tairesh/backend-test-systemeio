@@ -10,7 +10,7 @@ PHONY: help
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-init: down build install up success-message console ## Initialize environment
+init: down build install up migrate seed success-message console ## Initialize environment
 
 build: ## Build services.
 	${DC} build $(c)
@@ -39,5 +39,14 @@ success-message:
 	@echo "You can now access the application at http://localhost:8337"
 	@echo "Good luck! 🚀"
 
+migrate: ## Run migrations.
+	${DC_EXEC} php bin/console doctrine:migrations:migrate
+
+migrate-down: ## Rollback migrations.
+	${DC_EXEC} php bin/console doctrine:migrations:migrate prev
+
+seed: ## Seed database.
+	${DC_EXEC} php bin/console doctrine:fixtures:load
+
 test: ## Run tests.
-	${DC} exec -e APP_ENV=test sio_test php bin/phpunit $(c)
+	${DC} exec -e APP_ENV=test sio_test php bin/phpunit
