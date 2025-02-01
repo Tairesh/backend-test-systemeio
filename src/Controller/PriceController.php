@@ -13,11 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PriceController extends AbstractController
 {
-    private CalculatePriceService $calculatePriceService;
-
-    public function __construct(CalculatePriceService $calculatePriceService)
+    public function __construct(private readonly CalculatePriceService $calculatePriceService)
     {
-        $this->calculatePriceService = $calculatePriceService;
     }
 
     #[Route('/calculate-price', name: 'calculate_price', methods: ['POST'])]

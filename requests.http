@@ -5,8 +5,61 @@ Content-Type: application/json
 
 {
   "product": 1,
+  "taxNumber": "DE123456789"
+}
+
+### Calculate Price with invalid product
+POST http://127.0.0.1:8337/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 0,
+  "taxNumber": "DE123456789"
+}
+
+### Calculate Price with fixed coupon
+POST http://127.0.0.1:8337/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "GR123456789",
+  "couponCode": "F10"
+}
+
+### Calculate Price with percentage coupon
+POST http://127.0.0.1:8337/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "GR123456789",
+  "couponCode": "P6"
+}
+
+### Calculate Price with fixed coupon
+POST http://127.0.0.1:8337/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
   "taxNumber": "DE123456789",
-  "couponCode": "D15"
+  "couponCode": "F10"
+}
+
+### Calculate Price with percentage coupon
+POST http://127.0.0.1:8337/calculate-price
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "DE123456789",
+  "couponCode": "P10"
 }
 
 ### Execute Purchase
@@ -19,4 +72,28 @@ Content-Type: application/json
   "taxNumber": "IT12345678900",
   "couponCode": "D15",
   "paymentProcessor": "paypal"
+}
+
+### Execute Purchase with invalid payment processor
+POST http://127.0.0.1:8337/purchase
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "IT12345678900",
+  "couponCode": "D15",
+  "paymentProcessor": "invalid"
+}
+
+### Execute Purchase with too low price
+POST http://127.0.0.1:8337/purchase
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 3,
+  "taxNumber": "IT12345678900",
+  "couponCode": "P100",
+  "paymentProcessor": "stripe"
 }

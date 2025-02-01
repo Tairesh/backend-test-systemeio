@@ -7,7 +7,7 @@ namespace App\EventListener;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
+use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
 class ExceptionListener
@@ -27,8 +27,8 @@ class ExceptionListener
 
             $response = new JsonResponse(['error' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
             $event->setResponse($response);
-        } elseif ($exception instanceof NotNormalizableValueException) {
-            $response = new JsonResponse(['error' => $exception->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
+        } elseif ($exception instanceof InvalidArgumentException || $exception instanceof \UnexpectedValueException) {
+            $response = new JsonResponse(['error' => $exception->getMessage()], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
             $event->setResponse($response);
         } elseif ($exception instanceof HttpExceptionInterface) {
             $response = new JsonResponse(['error' => $exception->getMessage()], $exception->getStatusCode());

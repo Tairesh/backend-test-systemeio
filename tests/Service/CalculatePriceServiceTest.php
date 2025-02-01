@@ -29,7 +29,7 @@ class CalculatePriceServiceTest extends TestCase
     public function testCalculatePriceWithoutCoupon()
     {
         $product = new Product();
-        $product->setPrice(100);
+        $product->setPrice(10000);
 
         $this->productRepository->method('find')->willReturn($product);
 
@@ -37,17 +37,17 @@ class CalculatePriceServiceTest extends TestCase
 
         $price = $this->calculatePriceService->calculatePrice($request);
 
-        $this->assertEquals(119, $price); // 100 + 19% tax
+        $this->assertEquals(11900, $price); // 100 + 19% tax
     }
 
     public function testCalculatePriceWithFixedCoupon()
     {
         $product = new Product();
-        $product->setPrice(100);
+        $product->setPrice(10000);
 
         $coupon = new Coupon();
         $coupon->setMethod(CouponMethod::Fixed);
-        $coupon->setValue(10);
+        $coupon->setValue(1000);
 
         $this->productRepository->method('find')->willReturn($product);
         $this->couponRepository->method('findOneByCode')->willReturn($coupon);
@@ -56,26 +56,26 @@ class CalculatePriceServiceTest extends TestCase
 
         $price = $this->calculatePriceService->calculatePrice($request);
 
-        $this->assertEquals(109, $price); // 100 + 19% tax - 10 fixed discount
+        $this->assertEquals(10710, $price); // 100 - 10 fixed discount + 19% tax
     }
 
     public function testCalculatePriceWithPercentCoupon()
     {
         $product = new Product();
-        $product->setPrice(100);
+        $product->setPrice(10000);
 
         $coupon = new Coupon();
         $coupon->setMethod(CouponMethod::Percent);
-        $coupon->setValue(10);
+        $coupon->setValue(6);
 
         $this->productRepository->method('find')->willReturn($product);
         $this->couponRepository->method('findOneByCode')->willReturn($coupon);
 
-        $request = new CalculatePriceRequest(1, 'DE123456789', 'PERCENT10');
+        $request = new CalculatePriceRequest(1, 'GR123456789', 'P6');
 
         $price = $this->calculatePriceService->calculatePrice($request);
 
-        $this->assertEquals(107, $price); // 100 + 19% tax - 10% discount
+        $this->assertEquals(11656, $price); // 100 - 6% coupon + 24% tax).
     }
 
     public function testCalculatePriceWithInvalidProduct()

@@ -14,6 +14,7 @@ class CouponFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $coupons = [
+            ['code' => 'P6', 'method' => CouponMethod::Percent, 'value' => 6],
             ['code' => 'P10', 'method' => CouponMethod::Percent, 'value' => 10],
             ['code' => 'P100', 'method' => CouponMethod::Percent, 'value' => 100],
             ['code' => 'F10', 'method' => CouponMethod::Fixed, 'value' => 1000],

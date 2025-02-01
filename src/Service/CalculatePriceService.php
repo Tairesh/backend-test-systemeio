@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DTO\CalculatePriceRequest;
+use App\DTO\BasePriceRequest;
 use App\Entity\Coupon;
 use App\Enum\CouponMethod;
 use App\Repository\ProductRepository;
@@ -22,11 +22,11 @@ class CalculatePriceService
     }
 
     /**
-     * @param CalculatePriceRequest $request
+     * @param BasePriceRequest $request
      * @return int
      * @throws \InvalidArgumentException
      */
-    public function calculatePrice(CalculatePriceRequest $request): int
+    public function calculatePrice(BasePriceRequest $request): int
     {
         $product = $this->productRepository->find($request->product);
         if (!$product) {
@@ -34,17 +34,15 @@ class CalculatePriceService
         }
 
         $price = $product->getPrice();
-        $taxRate = $this->getTaxRate($request->taxNumber);
-        $priceWithTax = $price + ($price * $taxRate);
-
         if ($request->couponCode) {
             $coupon = $this->couponRepository->findOneByCode($request->couponCode);
             if ($coupon) {
-                $priceWithTax = $this->applyCoupon($priceWithTax, $coupon);
+                $price = $this->applyCoupon($price, $coupon);
             }
         }
+        $price = $this->applyTaxRate($price, $request->taxNumber);
 
-        return (int) round($priceWithTax);
+        return (int) round($price);
     }
 
     /**
@@ -66,6 +64,12 @@ class CalculatePriceService
         }
 
         throw new \InvalidArgumentException('Invalid tax number');
+    }
+
+    private function applyTaxRate(float$price, string $taxNumber): float
+    {
+        $taxRate = $this->getTaxRate($taxNumber);
+        return $price + ($price * $taxRate);
     }
 
     private function applyCoupon(float $price, Coupon $coupon): float
