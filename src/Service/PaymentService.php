@@ -11,11 +11,13 @@ use Systemeio\TestForCandidates\PaymentProcessor\StripePaymentProcessor;
 
 class PaymentService
 {
-    public function __construct(
-        private readonly StripePaymentProcessor $stripePaymentProcessor,
-        private readonly PaypalPaymentProcessor $paypalPaymentProcessor,
-    )
+    private readonly StripePaymentProcessor $stripePaymentProcessor;
+    private readonly PaypalPaymentProcessor $paypalPaymentProcessor;
+
+    public function __construct()
     {
+        $this->stripePaymentProcessor = new StripePaymentProcessor();
+        $this->paypalPaymentProcessor = new PaypalPaymentProcessor();
     }
 
     /**

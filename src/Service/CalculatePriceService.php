@@ -37,6 +37,8 @@ class CalculatePriceService
             $coupon = $this->couponRepository->findOneByCode($request->couponCode);
             if ($coupon) {
                 $price = $this->applyCoupon($price, $coupon);
+            } else {
+                throw new \InvalidArgumentException('Coupon not found');
             }
         }
         $price = $this->applyTaxRate($price, $request->taxNumber);

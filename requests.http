@@ -14,7 +14,7 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "product": 0,
+  "product": 999,
   "taxNumber": "DE123456789"
 }
 
@@ -51,17 +51,6 @@ Content-Type: application/json
   "couponCode": "F10"
 }
 
-### Calculate Price with percentage coupon
-POST http://127.0.0.1:8337/calculate-price
-Accept: application/json
-Content-Type: application/json
-
-{
-  "product": 1,
-  "taxNumber": "DE123456789",
-  "couponCode": "P10"
-}
-
 ### Execute Purchase
 POST http://127.0.0.1:8337/purchase
 Accept: application/json
@@ -70,7 +59,7 @@ Content-Type: application/json
 {
   "product": 1,
   "taxNumber": "IT12345678900",
-  "couponCode": "D15",
+  "couponCode": "F10",
   "paymentProcessor": "paypal"
 }
 
@@ -82,7 +71,7 @@ Content-Type: application/json
 {
   "product": 1,
   "taxNumber": "IT12345678900",
-  "couponCode": "D15",
+  "couponCode": "F10",
   "paymentProcessor": "invalid"
 }
 
@@ -97,3 +86,16 @@ Content-Type: application/json
   "couponCode": "P100",
   "paymentProcessor": "stripe"
 }
+
+### Execute Purchase with invalid coupon
+POST http://127.0.0.1:8337/purchase
+Accept: application/json
+Content-Type: application/json
+
+{
+  "product": 1,
+  "taxNumber": "IT12345678900",
+  "couponCode": "invalid",
+  "paymentProcessor": "stripe"
+}
+

@@ -27,7 +27,7 @@ class ExceptionListener
 
             $response = new JsonResponse(['error' => $errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
             $event->setResponse($response);
-        } elseif ($exception instanceof InvalidArgumentException || $exception instanceof \UnexpectedValueException) {
+        } elseif ($exception instanceof \InvalidArgumentException || $exception instanceof \UnexpectedValueException) {
             $response = new JsonResponse(['error' => $exception->getMessage()], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
             $event->setResponse($response);
         } elseif ($exception instanceof HttpExceptionInterface) {
