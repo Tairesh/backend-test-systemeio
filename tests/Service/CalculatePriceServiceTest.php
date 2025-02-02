@@ -11,19 +11,22 @@ use App\Enum\CouponMethod;
 use App\Repository\ProductRepository;
 use App\Repository\CouponRepository;
 use App\Service\CalculatePriceService;
+use App\Service\TaxRateService;
 use PHPUnit\Framework\TestCase;
 
 class CalculatePriceServiceTest extends TestCase
 {
     private $productRepository;
     private $couponRepository;
+    private $taxRateService;
     private $calculatePriceService;
 
     protected function setUp(): void
     {
         $this->productRepository = $this->createMock(ProductRepository::class);
         $this->couponRepository = $this->createMock(CouponRepository::class);
-        $this->calculatePriceService = new CalculatePriceService($this->productRepository, $this->couponRepository);
+        $this->taxRateService = $this->createMock(TaxRateService::class);
+        $this->calculatePriceService = new CalculatePriceService($this->productRepository, $this->couponRepository, $this->taxRateService);
     }
 
     public function testCalculatePriceWithoutCoupon()
@@ -32,6 +35,7 @@ class CalculatePriceServiceTest extends TestCase
         $product->setPrice(10000);
 
         $this->productRepository->method('find')->willReturn($product);
+        $this->taxRateService->method('getTaxRate')->willReturn(0.19);
 
         $request = new CalculatePriceRequest(1, 'DE123456789', null);
 
@@ -51,6 +55,7 @@ class CalculatePriceServiceTest extends TestCase
 
         $this->productRepository->method('find')->willReturn($product);
         $this->couponRepository->method('findOneByCode')->willReturn($coupon);
+        $this->taxRateService->method('getTaxRate')->willReturn(0.19);
 
         $request = new CalculatePriceRequest(1, 'DE123456789', 'FIXED10');
 
@@ -70,6 +75,7 @@ class CalculatePriceServiceTest extends TestCase
 
         $this->productRepository->method('find')->willReturn($product);
         $this->couponRepository->method('findOneByCode')->willReturn($coupon);
+        $this->taxRateService->method('getTaxRate')->willReturn(0.24);
 
         $request = new CalculatePriceRequest(1, 'GR123456789', 'P6');
 

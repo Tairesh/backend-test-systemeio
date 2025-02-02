@@ -12,13 +12,12 @@ use App\Repository\CouponRepository;
 
 class CalculatePriceService
 {
-    private ProductRepository $productRepository;
-    private CouponRepository $couponRepository;
-
-    public function __construct(ProductRepository $productRepository, CouponRepository $couponRepository)
+    public function __construct(
+        private readonly ProductRepository $productRepository,
+        private readonly CouponRepository  $couponRepository,
+        private readonly TaxRateService    $taxRateService,
+    )
     {
-        $this->productRepository = $productRepository;
-        $this->couponRepository = $couponRepository;
     }
 
     /**
@@ -42,44 +41,23 @@ class CalculatePriceService
         }
         $price = $this->applyTaxRate($price, $request->taxNumber);
 
-        return (int) round($price);
+        return (int)round($price);
     }
 
-    /**
-     * Return tax rate based on the country code
-     *
-     * @param string $taxNumber
-     * @return float
-     */
-    private function getTaxRate(string $taxNumber): float
+    private function applyTaxRate(float $price, string $taxNumber): float
     {
-        if (str_starts_with($taxNumber, 'DE')) {
-            return 0.19;
-        } elseif (str_starts_with($taxNumber, 'IT')) {
-            return 0.22;
-        } elseif (str_starts_with($taxNumber, 'FR')) {
-            return 0.20;
-        } elseif (str_starts_with($taxNumber, 'GR')) {
-            return 0.24;
-        }
-
-        throw new \InvalidArgumentException('Invalid tax number');
-    }
-
-    private function applyTaxRate(float$price, string $taxNumber): float
-    {
-        $taxRate = $this->getTaxRate($taxNumber);
+        $taxRate = $this->taxRateService->getTaxRate($taxNumber);
         return $price + ($price * $taxRate);
     }
 
     private function applyCoupon(float $price, Coupon $coupon): float
     {
-        if ($coupon->getMethod() === CouponMethod::Fixed) {
-            return max(0, $price - $coupon->getValue());
-        } elseif ($coupon->getMethod() === CouponMethod::Percent) {
-            return $price - ($price * ($coupon->getValue() / 100));
-        }
+        $price = match ($coupon->getMethod()) {
+            CouponMethod::Fixed => $price - $coupon->getValue(),
+            CouponMethod::Percent => $price - ($price * ($coupon->getValue() / 100)),
+            default => throw new \InvalidArgumentException('Invalid coupon method'),
+        };
 
-        return $price;
+        return max(0, $price);
     }
 }
