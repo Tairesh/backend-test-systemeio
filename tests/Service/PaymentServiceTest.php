@@ -22,10 +22,7 @@ class PaymentServiceTest extends TestCase
         $this->paypalProcessorMock = $this->createMock(PaypalPaymentProcessor::class);
         $this->stripeProcessorMock = $this->createMock(StripePaymentProcessor::class);
 
-        $this->paymentService = new PaymentService(
-            $this->stripeProcessorMock,
-            $this->paypalProcessorMock
-        );
+        $this->paymentService = new PaymentService($this->stripeProcessorMock, $this->paypalProcessorMock);
     }
 
     public function testProcessPaymentWithStripeSuccess(): void

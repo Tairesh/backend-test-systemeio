@@ -14,10 +14,19 @@ class PaymentService
     private readonly StripePaymentProcessor $stripePaymentProcessor;
     private readonly PaypalPaymentProcessor $paypalPaymentProcessor;
 
-    public function __construct()
+    public function __construct(
+        ?StripePaymentProcessor $stripePaymentProcessor = null,
+        ?PaypalPaymentProcessor $paypalPaymentProcessor = null,
+    )
     {
-        $this->stripePaymentProcessor = new StripePaymentProcessor();
-        $this->paypalPaymentProcessor = new PaypalPaymentProcessor();
+        if ($stripePaymentProcessor === null) {
+            $stripePaymentProcessor = new StripePaymentProcessor();
+        }
+        if ($paypalPaymentProcessor === null) {
+            $paypalPaymentProcessor = new PaypalPaymentProcessor();
+        }
+        $this->stripePaymentProcessor = $stripePaymentProcessor;
+        $this->paypalPaymentProcessor = $paypalPaymentProcessor;
     }
 
     /**
