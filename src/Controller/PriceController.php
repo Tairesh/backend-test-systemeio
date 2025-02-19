@@ -20,11 +20,7 @@ class PriceController extends AbstractController
     #[Route('/calculate-price', name: 'calculate_price', methods: ['POST'])]
     public function calculatePrice(#[MapRequestPayload] CalculatePriceRequest $request): JsonResponse
     {
-        try {
-            $price = $this->calculatePriceService->calculatePrice($request) / 100;
-            return new JsonResponse(['price' => $price], JsonResponse::HTTP_OK);
-        } catch (\InvalidArgumentException $e) {
-            return new JsonResponse(['error' => $e->getMessage()], JsonResponse::HTTP_BAD_REQUEST);
-        }
+        $price = $this->calculatePriceService->calculatePrice($request) / 100;
+        return new JsonResponse(['price' => $price], JsonResponse::HTTP_OK);
     }
 }
